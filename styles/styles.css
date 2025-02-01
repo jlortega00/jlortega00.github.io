@@ -21,12 +21,13 @@ h1 {
 }
 
 #snake-container {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  pointer-events: none; /* Permite hacer clic a través de la serpiente */
+  pointer-events: none;
+  z-index: 0;
 }
 
 .snake-segment {
@@ -35,4 +36,9 @@ h1 {
   height: 20px;
   background-color: lime;
   border: 1px solid #000;
+  border-radius: 50%; /* Hace que los segmentos sean circulares */
+}
+
+.snake-head {
+  background-color: darkgreen; /* Color diferente para la cabeza */
 }
