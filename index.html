@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mi Página GitHub.io</title>
+  <title>Información del Visitante</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -13,28 +13,54 @@
     h1 {
       color: #333;
     }
-    #ip {
-      font-size: 1.5em;
-      color: #007BFF;
-      font-weight: bold;
+    .info {
+      background: #f4f4f4;
+      padding: 20px;
+      margin: 20px auto;
+      width: 50%;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
   </style>
 </head>
 <body>
-  <h1>¡Bienvenido a mi página!</h1>
-  <p>Tu dirección IP es: <span id="ip">Cargando...</span></p>
+  <h1>Información del Visitante</h1>
+  <div class="info">
+    <p><strong>Dirección IP:</strong> <span id="ip">Cargando...</span></p>
+    <p><strong>Ubicación:</strong> <span id="location">Cargando...</span></p>
+    <p><strong>Navegador:</strong> <span id="browser">Cargando...</span></p>
+    <p><strong>Sistema Operativo:</strong> <span id="os">Cargando...</span></p>
+    <p><strong>Resolución de Pantalla:</strong> <span id="resolution">Cargando...</span></p>
+    <p><strong>Idioma del Navegador:</strong> <span id="language">Cargando...</span></p>
+  </div>
 
   <script>
-    // Usamos una API para obtener la dirección IP del visitante
-    fetch('https://api.ipify.org?format=json')
+    // Obtener la dirección IP y la ubicación
+    fetch('https://ipinfo.io/json')
       .then(response => response.json())
       .then(data => {
         document.getElementById('ip').textContent = data.ip;
+        document.getElementById('location').textContent = `${data.city}, ${data.region}, ${data.country}`;
       })
       .catch(error => {
-        console.error('Error al obtener la IP:', error);
+        console.error('Error al obtener la IP y ubicación:', error);
         document.getElementById('ip').textContent = 'No se pudo obtener la IP';
+        document.getElementById('location').textContent = 'No se pudo obtener la ubicación';
       });
+
+    // Obtener información del navegador y sistema operativo
+    const browserInfo = navigator.userAgent;
+    const osInfo = navigator.platform;
+    document.getElementById('browser').textContent = browserInfo;
+    document.getElementById('os').textContent = osInfo;
+
+    // Obtener la resolución de pantalla
+    const screenResolution = `${window.screen.width}x${window.screen.height}`;
+    document.getElementById('resolution').textContent = screenResolution;
+
+    // Obtener el idioma del navegador
+    const browserLanguage = navigator.language;
+    document.getElementById('language').textContent = browserLanguage;
   </script>
 </body>
 </html>
