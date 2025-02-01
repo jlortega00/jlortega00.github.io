@@ -1,12 +1,13 @@
 const container = document.getElementById('snake-container');
 const segmentSize = 20; // Tamaño de cada segmento de la serpiente
-let snake = [{ x: 0, y: 0 }]; // Inicializa la serpiente con un segmento
+let snake = [{ x: 10, y: 10 }]; // Inicializa la serpiente con un segmento
 let direction = { x: 1, y: 0 }; // Dirección inicial de la serpiente
 
 // Función para crear un segmento de la serpiente
-function createSegment(x, y) {
+function createSegment(x, y, isHead = false) {
   const segment = document.createElement('div');
   segment.classList.add('snake-segment');
+  if (isHead) segment.classList.add('snake-head'); // Añade una clase para la cabeza
   segment.style.left = `${x * segmentSize}px`;
   segment.style.top = `${y * segmentSize}px`;
   return segment;
@@ -35,8 +36,8 @@ function moveSnake() {
 
   // Actualiza la posición de los segmentos en la pantalla
   container.innerHTML = ''; // Limpia el contenedor
-  snake.forEach(segment => {
-    container.appendChild(createSegment(segment.x, segment.y));
+  snake.forEach((segment, index) => {
+    container.appendChild(createSegment(segment.x, segment.y, index === 0));
   });
 }
 
