@@ -4,24 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Información del Visitante</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 50px;
-    }
-    h1 {
-      color: #333;
-    }
-    .info {
-      background: #f4f4f4;
-      padding: 20px;
-      margin: 20px auto;
-      width: 50%;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-  </style>
+  <link rel="stylesheet" href="styles/styles.css">
 </head>
 <body>
   <h1>Información del Visitante</h1>
@@ -32,35 +15,15 @@
     <p><strong>Sistema Operativo:</strong> <span id="os">Cargando...</span></p>
     <p><strong>Resolución de Pantalla:</strong> <span id="resolution">Cargando...</span></p>
     <p><strong>Idioma del Navegador:</strong> <span id="language">Cargando...</span></p>
+    <p><strong>Proveedor de Internet (ISP):</strong> <span id="isp">Cargando...</span></p>
+    <p><strong>Zona Horaria:</strong> <span id="timezone">Cargando...</span></p>
+    <p><strong>Tipo de Dispositivo:</strong> <span id="device">Cargando...</span></p>
+    <p><strong>Tipo de Conexión:</strong> <span id="connection">Cargando...</span></p>
+    <p><strong>Nivel de Batería:</strong> <span id="battery">Cargando...</span></p>
+    <p><strong>GPU:</strong> <span id="gpu">Cargando...</span></p>
+    <p><strong>Núcleos de CPU:</strong> <span id="cpu">Cargando...</span></p>
   </div>
 
-  <script>
-    // Obtener la dirección IP y la ubicación
-    fetch('https://ipinfo.io/json')
-      .then(response => response.json())
-      .then(data => {
-        document.getElementById('ip').textContent = data.ip;
-        document.getElementById('location').textContent = `${data.city}, ${data.region}, ${data.country}`;
-      })
-      .catch(error => {
-        console.error('Error al obtener la IP y ubicación:', error);
-        document.getElementById('ip').textContent = 'No se pudo obtener la IP';
-        document.getElementById('location').textContent = 'No se pudo obtener la ubicación';
-      });
-
-    // Obtener información del navegador y sistema operativo
-    const browserInfo = navigator.userAgent;
-    const osInfo = navigator.platform;
-    document.getElementById('browser').textContent = browserInfo;
-    document.getElementById('os').textContent = osInfo;
-
-    // Obtener la resolución de pantalla
-    const screenResolution = `${window.screen.width}x${window.screen.height}`;
-    document.getElementById('resolution').textContent = screenResolution;
-
-    // Obtener el idioma del navegador
-    const browserLanguage = navigator.language;
-    document.getElementById('language').textContent = browserLanguage;
-  </script>
+  <script src="scripts/main.js"></script>
 </body>
 </html>
