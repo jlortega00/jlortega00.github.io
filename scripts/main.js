@@ -1,22 +1,30 @@
 // Obtener la dirección IP y la ubicación
-fetch('https://ipinfo.io/json')
+fetch('http://ip-api.com/json')
   .then(response => response.json())
   .then(data => {
-    document.getElementById('ip').textContent = data.ip;
-    document.getElementById('location').textContent = `${data.city}, ${data.region}, ${data.country}`;
-    document.getElementById('isp').textContent = data.org;
-    document.getElementById('timezone').textContent = data.timezone;
+    if (data.status === 'success') {
+      document.getElementById('ip').textContent = data.query;
+      const location = `${data.city}, ${data.regionName}, ${data.country}`;
+      document.getElementById('location').textContent = location;
+      document.getElementById('isp').textContent = data.isp;
+      document.getElementById('timezone').textContent = data.timezone;
+    } else {
+      document.getElementById('ip').textContent = 'No se pudo obtener la IP';
+      document.getElementById('location').textContent = 'Ubicación no disponible';
+    }
   })
   .catch(error => {
     console.error('Error al obtener la IP y ubicación:', error);
     document.getElementById('ip').textContent = 'No se pudo obtener la IP';
-    document.getElementById('location').textContent = 'No se pudo obtener la ubicación';
+    document.getElementById('location').textContent = 'Error al obtener la ubicación';
   });
 
-// Obtener información del navegador y sistema operativo
-const browserInfo = navigator.userAgent;
-const osInfo = navigator.platform;
+// Obtener información del navegador
+const browserInfo = navigator.userAgentData ? navigator.userAgentData.brands.map(brand => `${brand.brand} ${brand.version}`).join(', ') : navigator.userAgent;
 document.getElementById('browser').textContent = browserInfo;
+
+// Obtener información del sistema operativo
+const osInfo = navigator.platform;
 document.getElementById('os').textContent = osInfo;
 
 // Obtener la resolución de pantalla
