@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Página GitHub.io</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    h1 {
+      color: #333;
+    }
+    #ip {
+      font-size: 1.5em;
+      color: #007BFF;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>¡Bienvenido a mi página!</h1>
+  <p>Tu dirección IP es: <span id="ip">Cargando...</span></p>
+
+  <script>
+    // Usamos una API para obtener la dirección IP del visitante
+    fetch('https://api.ipify.org?format=json')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('ip').textContent = data.ip;
+      })
+      .catch(error => {
+        console.error('Error al obtener la IP:', error);
+        document.getElementById('ip').textContent = 'No se pudo obtener la IP';
+      });
+  </script>
+</body>
+</html>
