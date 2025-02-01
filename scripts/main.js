@@ -9,12 +9,14 @@ fetch('https://api.ipify.org?format=json')
     fetch(`https://api.ipstack.com/${ip}?access_key=YOUR_ACCESS_KEY`)
       .then(response => response.json())
       .then(locationData => {
-        if (locationData && locationData.city) {
+        // Verificar que la respuesta tiene datos
+        if (locationData && locationData.city && locationData.region_name && locationData.country_name) {
           const location = `${locationData.city}, ${locationData.region_name}, ${locationData.country_name}`;
           document.getElementById('location').textContent = location;
           document.getElementById('isp').textContent = locationData.connection.isp || 'Desconocido';
           document.getElementById('timezone').textContent = locationData.location.timezone || 'Desconocido';
         } else {
+          console.warn('No se pudo obtener ubicación detallada.');
           document.getElementById('location').textContent = 'Ubicación no disponible';
           document.getElementById('isp').textContent = 'ISP no disponible';
           document.getElementById('timezone').textContent = 'Zona horaria no disponible';
