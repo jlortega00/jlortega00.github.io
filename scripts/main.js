@@ -1,6 +1,9 @@
 // Obtener la dirección IP y la ubicación usando ipapi.co
 fetch('https://ipapi.co/json/')
-  .then(response => response.json())
+  .then(response => {
+    if (!response.ok) throw new Error("No se pudo obtener la IP");
+    return response.json();
+  })
   .then(data => {
     document.getElementById('ip').textContent = data.ip || 'No disponible';
     document.getElementById('location').textContent = `${data.city}, ${data.region}, ${data.country_name}` || 'No disponible';
@@ -13,30 +16,30 @@ fetch('https://ipapi.co/json/')
     document.getElementById('location').textContent = 'Error al obtener la ubicación';
   });
 
-// Obtener información del navegador y sistema operativo
-const browserInfo = navigator.userAgent || 'No disponible';
-document.getElementById('browser').textContent = browserInfo;
-
-const osInfo = navigator.platform || 'No disponible';
-document.getElementById('os').textContent = osInfo;
+// Obtener información del navegador de forma más segura
+if (navigator.userAgentData) {
+  navigator.userAgentData.getHighEntropyValues(["platform", "architecture", "model"])
+    .then(data => {
+      document.getElementById('browser').textContent = navigator.userAgentData.brands.map(b => b.brand).join(', ') || 'No disponible';
+      document.getElementById('os').textContent = data.platform || 'No disponible';
+    });
+} else {
+  document.getElementById('browser').textContent = navigator.userAgent || 'No disponible';
+  document.getElementById('os').textContent = navigator.platform || 'No disponible';
+}
 
 // Obtener la resolución de pantalla
-const screenResolution = `${window.screen.width}x${window.screen.height}`;
-document.getElementById('resolution').textContent = screenResolution;
+document.getElementById('resolution').textContent = `${window.screen.width}x${window.screen.height}`;
 
 // Obtener el idioma del navegador
-const browserLanguage = navigator.language || 'No disponible';
-document.getElementById('language').textContent = browserLanguage;
+document.getElementById('language').textContent = navigator.language || 'No disponible';
 
 // Detectar el tipo de dispositivo
-const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-const deviceType = isMobile ? 'Móvil' : 'Escritorio';
-document.getElementById('device').textContent = deviceType;
+document.getElementById('device').textContent = /Mobi|Android/i.test(navigator.userAgent) ? 'Móvil' : 'Escritorio';
 
 // Obtener información de la conexión a Internet
 if (navigator.connection) {
-  const connectionType = navigator.connection.effectiveType || 'No disponible';
-  document.getElementById('connection').textContent = connectionType;
+  document.getElementById('connection').textContent = navigator.connection.effectiveType || 'No disponible';
 } else {
   document.getElementById('connection').textContent = 'No compatible';
 }
@@ -45,11 +48,9 @@ if (navigator.connection) {
 if ('getBattery' in navigator) {
   navigator.getBattery()
     .then(battery => {
-      const batteryLevel = Math.round(battery.level * 100);
-      document.getElementById('battery').textContent = `${batteryLevel}%`;
+      document.getElementById('battery').textContent = `${Math.round(battery.level * 100)}%`;
     })
-    .catch(error => {
-      console.error('Error al obtener la información de la batería:', error);
+    .catch(() => {
       document.getElementById('battery').textContent = 'No disponible';
     });
 } else {
@@ -59,13 +60,7 @@ if ('getBattery' in navigator) {
 // Obtener información de la GPU
 const canvas = document.createElement('canvas');
 const gl = canvas.getContext('webgl');
-if (gl) {
-  const rendererInfo = gl.getParameter(gl.RENDERER) || 'No disponible';
-  document.getElementById('gpu').textContent = rendererInfo;
-} else {
-  document.getElementById('gpu').textContent = 'No compatible';
-}
+document.getElementById('gpu').textContent = gl ? gl.getParameter(gl.RENDERER) || 'No disponible' : 'No compatible';
 
 // Obtener información de la CPU
-const hardwareConcurrency = navigator.hardwareConcurrency || 'No disponible';
-document.getElementById('cpu').textContent = hardwareConcurrency;
+document.getElementById('cpu').textContent = navigator.hardwareConcurrency || 'No disponible';
