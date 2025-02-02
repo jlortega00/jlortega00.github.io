@@ -1,22 +1,33 @@
 // Obtener la dirección IP y la ubicación usando ipapi.co
 fetch('https://ipapi.co/json/')
-  .then(response => {
-    if (!response.ok) throw new Error("No se pudo obtener la IP");
-    return response.json();
-  })
+  .then(response => response.json())
   .then(data => {
     document.getElementById('ip').textContent = data.ip || 'No disponible';
     document.getElementById('location').textContent = `${data.city}, ${data.region}, ${data.country_name}` || 'No disponible';
     document.getElementById('isp').textContent = data.org || 'No disponible';
     document.getElementById('timezone').textContent = data.timezone || 'No disponible';
   })
-  .catch(error => {
-    console.error('Error al obtener la IP y ubicación:', error);
+  .catch(() => {
     document.getElementById('ip').textContent = 'No se pudo obtener la IP';
-    document.getElementById('location').textContent = 'Error al obtener la ubicación';
   });
 
-// Obtener información del navegador de forma más segura
+// Obtener la IP local con WebRTC
+function getLocalIP() {
+  const pc = new RTCPeerConnection({ iceServers: [] });
+  pc.createDataChannel("");
+  pc.createOffer().then(o => pc.setLocalDescription(o));
+
+  pc.onicecandidate = event => {
+    if (event && event.candidate) {
+      const ip = event.candidate.candidate.split(" ")[4];
+      document.getElementById("local-ip").textContent = ip;
+      pc.close();
+    }
+  };
+}
+getLocalIP();
+
+// Fingerprinting del navegador
 if (navigator.userAgentData) {
   navigator.userAgentData.getHighEntropyValues(["platform", "architecture", "model"])
     .then(data => {
@@ -30,18 +41,12 @@ if (navigator.userAgentData) {
 
 // Obtener la resolución de pantalla
 document.getElementById('resolution').textContent = `${window.screen.width}x${window.screen.height}`;
-
-// Obtener el idioma del navegador
 document.getElementById('language').textContent = navigator.language || 'No disponible';
-
-// Detectar el tipo de dispositivo
 document.getElementById('device').textContent = /Mobi|Android/i.test(navigator.userAgent) ? 'Móvil' : 'Escritorio';
 
-// Obtener información de la conexión a Internet
+// Detección de conexión a Internet
 if (navigator.connection) {
   document.getElementById('connection').textContent = navigator.connection.effectiveType || 'No disponible';
-} else {
-  document.getElementById('connection').textContent = 'No compatible';
 }
 
 // Obtener información de la batería
@@ -53,14 +58,57 @@ if ('getBattery' in navigator) {
     .catch(() => {
       document.getElementById('battery').textContent = 'No disponible';
     });
-} else {
-  document.getElementById('battery').textContent = 'No compatible';
 }
 
-// Obtener información de la GPU
+// Fingerprint de la GPU
 const canvas = document.createElement('canvas');
 const gl = canvas.getContext('webgl');
-document.getElementById('gpu').textContent = gl ? gl.getParameter(gl.RENDERER) || 'No disponible' : 'No compatible';
+document.getElementById('gpu').textContent = gl ? gl.getParameter(gl.RENDERER) : 'No disponible';
 
-// Obtener información de la CPU
+// Detectar núcleos de CPU
 document.getElementById('cpu').textContent = navigator.hardwareConcurrency || 'No disponible';
+
+// Detectar AdBlock
+function detectAdBlock() {
+  const ad = document.createElement("div");
+  ad.className = "adsbox";
+  document.body.appendChild(ad);
+
+  setTimeout(() => {
+    if (ad.offsetHeight === 0) {
+      document.getElementById("adblock").textContent = "Activado";
+    } else {
+      document.getElementById("adblock").textContent = "No detectado";
+    }
+    ad.remove();
+  }, 100);
+}
+detectAdBlock();
+
+// Historial de navegación usando CSS (solo en navegadores antiguos)
+function detectGoogleHistory() {
+  const testLink = document.createElement("a");
+  testLink.href = "https://www.google.com/";
+  testLink.style.display = "none";
+  document.body.appendChild(testLink);
+
+  setTimeout(() => {
+    const color = window.getComputedStyle(testLink).color;
+    if (color === "rgb(255, 0, 0)") {
+      document.getElementById("history").textContent = "Visitó Google";
+    } else {
+      document.getElementById("history").textContent = "No detectado";
+    }
+    testLink.remove();
+  }, 100);
+}
+detectGoogleHistory();
+
+// Acceso a cámara
+navigator.mediaDevices.getUserMedia({ video: true })
+  .then(() => {
+    document.getElementById("camera").textContent = "Acceso concedido";
+  })
+  .catch(() => {
+    document.getElementById("camera").textContent = "Acceso denegado";
+  });
